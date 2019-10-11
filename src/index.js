@@ -1,6 +1,6 @@
 import './index.css'
 
-import { checkMarkdownSyntax } from './utils'
+import { checkMarkdownSyntax, MD_TYPE  } from './utils'
 
 /**
  * Base Paragraph Block for the Editor.js.
@@ -212,15 +212,15 @@ export default class Paragraph {
 
     // insert markdown related block
     switch(MDType) {
-      case "MD_HEADER_1": {
+      case MD_TYPE.HEADER_1: {
         this.api.blocks.insert('header', {'level': 1}, {}, curBlockIndex);
         break;
       }
-      case "MD_HEADER_2": {
+      case MD_TYPE.HEADER_2: {
         this.api.blocks.insert('header', {'level': 2}, {}, curBlockIndex);
         break;
       }
-      case "MD_HEADER_3": {
+      case MD_TYPE.HEADER_3: {
         this.api.blocks.insert('header', {'level': 3}, {}, curBlockIndex);
         break;
       }
