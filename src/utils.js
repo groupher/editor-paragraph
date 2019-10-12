@@ -4,6 +4,8 @@ export const MD_TYPE = {
   "HEADER_3": "HEADER_3",
   "UNORDERED_LIST": "UNORDERED_LIST",
   "ORDERED_LIST": "ORDERED_LIST",
+  "QUOTE": "QUOTE",
+  "CODE": "CODE",
 }
 
 export const checkMarkdownSyntax = function(curBlock, data) {
@@ -41,13 +43,23 @@ export const checkMarkdownSyntax = function(curBlock, data) {
       break
     }
 
-    case blockText=== '-' && data === ' ': {
+    case blockText === '-' && data === ' ': {
       MDType = MD_TYPE.UNORDERED_LIST
       break
     }
 
-    case blockText=== '1' && data === ' ': {
+    case blockText === '1' && data === ' ': {
       MDType = MD_TYPE.ORDERED_LIST
+      break
+    }
+    
+    case blockText === '>' && data === ' ': {
+      MDType = MD_TYPE.QUOTE
+      break
+    }
+
+    case blockText === '```': {
+      MDType = MD_TYPE.CODE
       break
     }
 

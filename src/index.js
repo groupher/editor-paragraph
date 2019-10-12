@@ -235,6 +235,16 @@ export default class Paragraph {
         break;
       }
 
+      case MD_TYPE.QUOTE: {
+        this.api.blocks.insert('quote', {}, {}, curBlockIndex);
+        break;
+      }
+
+      case MD_TYPE.CODE: {
+        this.api.blocks.insert('code', {}, {}, curBlockIndex);
+        break;
+      }
+
       default: {
         console.log("not supported")
       }
