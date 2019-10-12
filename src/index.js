@@ -224,6 +224,17 @@ export default class Paragraph {
         this.api.blocks.insert('header', {'level': 3}, {}, curBlockIndex);
         break;
       }
+
+      case MD_TYPE.UNORDERED_LIST: {
+        this.api.blocks.insert('list', {'style': 'unordered'}, {}, curBlockIndex);
+        break;
+      }
+
+      case MD_TYPE.ORDERED_LIST: {
+        this.api.blocks.insert('list', {'style': 'ordered'}, {}, curBlockIndex);
+        break;
+      }
+
       default: {
         console.log("not supported")
       }

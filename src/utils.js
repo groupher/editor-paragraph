@@ -2,9 +2,8 @@ export const MD_TYPE = {
   "HEADER_1": "HEADER_1",
   "HEADER_2": "HEADER_2",
   "HEADER_3": "HEADER_3",
-  // "HEADER_4": "HEADER_4",
-  // "HEADER_5": "HEADER_6",
-  // "HEADER_6": "HEADER_6",
+  "UNORDERED_LIST": "UNORDERED_LIST",
+  "ORDERED_LIST": "ORDERED_LIST",
 }
 
 export const checkMarkdownSyntax = function(curBlock, data) {
@@ -39,6 +38,16 @@ export const checkMarkdownSyntax = function(curBlock, data) {
 
     case blockText === '######' && data === ' ': {
       MDType = MD_TYPE.HEADER_3
+      break
+    }
+
+    case blockText=== '-' && data === ' ': {
+      MDType = MD_TYPE.UNORDERED_LIST
+      break
+    }
+
+    case blockText=== '1' && data === ' ': {
+      MDType = MD_TYPE.ORDERED_LIST
       break
     }
 
