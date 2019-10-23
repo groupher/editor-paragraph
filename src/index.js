@@ -41,7 +41,8 @@ export default class Paragraph {
 
     this._CSS = {
       block: this.api.styles.block,
-      wrapper: 'ce-paragraph'
+      wrapper: 'ce-paragraph',
+      mention: 'cdx-mention'
     };
     this.onKeyUp = this.onKeyUp.bind(this);
 
@@ -125,7 +126,7 @@ export default class Paragraph {
       // console.log("sel.anchorNode.parentNode.className", sel.anchorNode.parentNode.className)
       // console.log("sel.anchorNode.parentNode.remove: ", sel.anchorNode.parentNode.remove)
 
-      if(sel.anchorNode.parentNode.className === 'cdx-mention') {
+      if(sel.anchorNode.parentNode.className === this._CSS.mention) {
         sel.anchorNode.parentNode.remove();
       }
     }
@@ -262,9 +263,9 @@ export default class Paragraph {
   */
   handleMention(ev) {
     if(ev.data === '@') {
-      // return false
-      const mention = '<span class="cdx-mention" contenteditable="false" id="cdx-mention" tabindex="1" style="opacity: 1;">.</span>';
-      const mentionId = '#cdx-mention';
+      const mentionClass = this._CSS.mention
+      const mention = `<span class="${mentionClass}" contenteditable="false" id="${mentionClass}" tabindex="1" style="opacity: 1;">.</span>`;
+      const mentionId = `#${mentionClass}`;
 
       this.insertHtmlAtCaret(mention);
 
