@@ -1,6 +1,11 @@
 import './index.css'
 
-import { checkMarkdownSyntax, MD_TYPE  } from './utils'
+import { 
+  checkMarkdownSyntax, 
+  checkInlineMarkdownSyntax, 
+  MD_TYPE, 
+  ANCHOR
+} from './utils'
 
 /**
  * Base Paragraph Block for the Editor.js.
@@ -193,6 +198,25 @@ export default class Paragraph {
     }
   }
 
+  handleInlineMDShortcut(ev) {
+    const curBlockIndex = this.api.blocks.getCurrentBlockIndex();
+    const curBlock = this.api.blocks.getBlockByIndex(curBlockIndex);
+  
+    const { isValid, md, html } = checkInlineMarkdownSyntax(curBlock, ev.data)
+    if (isValid) {
+      const INLINE_MD_HOLDER = `<span id="${ANCHOR.INLINE_MD}" />`
+
+      // 改变 innerHTML 以后光标会到内容的最开始，需要埋一个点，完事后在选中
+      this.insertHtmlAtCaret(INLINE_MD_HOLDER)
+      ev.target.innerHTML = ev.target.innerHTML.replace(md, html)
+      this.selectNode(document.querySelector(`#${ANCHOR.INLINE_MD}`));
+      document.querySelector(`#${ANCHOR.INLINE_MD}`).remove()
+
+      // 防止插入粗体以后以后输入一直是粗体。。
+      this.insertHtmlAtCaret(ANCHOR.SPACE);
+    }
+  }
+
   // handle markdown shortcuts
   /**
    * handle markdown shortcuts
@@ -269,9 +293,8 @@ export default class Paragraph {
 
       this.insertHtmlAtCaret(mention);
 
-      const spaceHolder = '&nbsp;';
-      this.insertHtmlAtCaret(spaceHolder);
-      this.insertHtmlAtCaret(spaceHolder);
+      this.insertHtmlAtCaret(ANCHOR.SPACE);
+      this.insertHtmlAtCaret(ANCHOR.SPACE);
 
       const mentionParent = document.querySelector(mentionId).parentElement
       console.log('mentionParent ', mentionParent.innerHTML )
@@ -294,10 +317,24 @@ export default class Paragraph {
 
     div.addEventListener('keyup', this.onKeyUp);
 
-    div.addEventListener('input', (ev) => {
+    // const MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
+    // let observer = new MutationObserver(myFunction);
+    // observer.observe(element, {
+    //   childList: true
+    // });
+
+    this.api.listeners.on(div, 'input', (ev) => {
       this.handleMDShortcut(ev);
+      this.handleInlineMDShortcut(ev);
       this.handleMention(ev);
-    });
+      // console.log('Button clicked!');
+   }, true);
+
+    // div.addEventListener('input', (ev) => {
+    //   this.handleMDShortcut(ev);
+    //   this.handleInlineMDShortcut(ev);
+    //   this.handleMention(ev);
+    // });
 
     return div;
   }
