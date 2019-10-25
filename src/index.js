@@ -6,7 +6,6 @@ import {
   MD_TYPE, 
   ANCHOR,
   insertHtmlAtCaret,
-  moveCaret,
   selectNode,
   markdownBlockConfig
 } from './utils'
