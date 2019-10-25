@@ -4,7 +4,11 @@ import {
   checkMarkdownSyntax, 
   checkInlineMarkdownSyntax, 
   MD_TYPE, 
-  ANCHOR
+  ANCHOR,
+  insertHtmlAtCaret,
+  moveCaret,
+  selectNode,
+  markdownBlockConfig
 } from './utils'
 
 /**
@@ -62,37 +66,7 @@ export default class Paragraph {
     this.data = data;
   }
 
-  selectNode(node) {
-    if (document.body.createTextRange) {
-      const range = document.body.createTextRange();
-
-      range.moveToElementText(node);
-      range.select();
-    } else if (window.getSelection) {
-      const selection = window.getSelection();
-      const range = document.createRange();
-
-      // console.log('node.textContent: ', node.textContent);
-      // console.log('node.childNodes: ', node.childNodes);
-      // console.log('node.textContent.length: ', node.textContent.length);
-      // console.log('node.textContent.length: ', node.textContent.trim().length);
-      // range.collapse(true);
-      // const startIndex = 6;
-      // const endIndex = 7; // node.textContent.length;
-
-      // range.setStart(node.childNodes[0], startIndex);
-      // range.setEnd(node.childNodes[0], endIndex);
-
-      range.selectNodeContents(node);
-      selection.removeAllRanges();
-      selection.addRange(range);
-      // console.log('2 -->', range.extractContents());
-
-      console.log('2 -->');
-    } else {
-      console.warn('Could not select text in node: Unsupported browser.');
-    }
-  }
+  
 
   /**
    * Check if text content is empty and set empty string to inner html.
@@ -136,67 +110,6 @@ export default class Paragraph {
       }
     }
   }
-  // NOTE:  html is string
-  // see: https://stackoverflow.com/questions/6690752/insert-html-at-caret-in-a-contenteditable-div
-  // demo: http://jsfiddle.net/jwvha/1/
-  insertHtmlAtCaret(html) {
-    let sel, range;
-
-    if (window.getSelection) {
-      // IE9 and non-IE
-      sel = window.getSelection();
-      if (sel.getRangeAt && sel.rangeCount) {
-        range = sel.getRangeAt(0);
-        range.deleteContents();
-
-        // Range.createContextualFragment() would be useful here but is
-        // non-standard and not supported in all browsers (IE9, for one)
-        const el = document.createElement('div');
-
-        el.innerHTML = html;
-        var frag = document.createDocumentFragment(), node, lastNode;
-
-        while ( (node = el.firstChild) ) {
-          lastNode = frag.appendChild(node);
-        }
-        range.insertNode(frag);
-
-        // Preserve the selection
-        if (lastNode) {
-          range = range.cloneRange();
-          range.setStartAfter(lastNode);
-          range.collapse(true);
-          sel.removeAllRanges();
-          sel.addRange(range);
-        }
-      }
-    }
-  }
-
-  // move caret to next n count
-  moveCaret(win, charCount) {
-    var sel, range;
-
-    if (win.getSelection) {
-      sel = win.getSelection();
-      if (sel.rangeCount > 0) {
-        var textNode = sel.anchorNode.parentNode; // sel.focusNode;
-
-        // debugger;
-
-        var newOffset = sel.focusOffset + charCount;
-
-        // sel.collapse(textNode, Math.min(textNode.length, newOffset));
-        sel.collapse(textNode, 3);
-      }
-    } else if ( (sel = win.document.selection) ) {
-      if (sel.type != 'Control') {
-        range = sel.createRange();
-        range.move('character', charCount);
-        range.select();
-      }
-    }
-  }
 
   handleInlineMDShortcut(ev) {
     const curBlockIndex = this.api.blocks.getCurrentBlockIndex();
@@ -207,13 +120,13 @@ export default class Paragraph {
       const INLINE_MD_HOLDER = `<span id="${ANCHOR.INLINE_MD}" />`
 
       // 改变 innerHTML 以后光标会到内容的最开始，需要埋一个点，完事后在选中
-      this.insertHtmlAtCaret(INLINE_MD_HOLDER)
+      insertHtmlAtCaret(INLINE_MD_HOLDER)
       ev.target.innerHTML = ev.target.innerHTML.replace(md, html)
-      this.selectNode(document.querySelector(`#${ANCHOR.INLINE_MD}`));
+      selectNode(document.querySelector(`#${ANCHOR.INLINE_MD}`));
       document.querySelector(`#${ANCHOR.INLINE_MD}`).remove()
 
       // 防止插入粗体以后以后输入一直是粗体。。
-      this.insertHtmlAtCaret(ANCHOR.SPACE);
+      insertHtmlAtCaret(ANCHOR.SPACE);
     }
   }
 
@@ -233,50 +146,14 @@ export default class Paragraph {
     if(!isValidMDStatus) return false;
 
     // delete current block
-    this.api.blocks.delete(curBlockIndex);
+    const { isInvalid, type, toolData, config } = markdownBlockConfig(MDType)
 
-    // insert markdown related block
-    switch(MDType) {
-      case MD_TYPE.HEADER_1: {
-        this.api.blocks.insert('header', {'level': 1}, {}, curBlockIndex);
-        break;
-      }
-      case MD_TYPE.HEADER_2: {
-        this.api.blocks.insert('header', {'level': 2}, {}, curBlockIndex);
-        break;
-      }
-      case MD_TYPE.HEADER_3: {
-        this.api.blocks.insert('header', {'level': 3}, {}, curBlockIndex);
-        break;
-      }
-
-      case MD_TYPE.UNORDERED_LIST: {
-        this.api.blocks.insert('list', {'style': 'unordered'}, {}, curBlockIndex);
-        break;
-      }
-
-      case MD_TYPE.ORDERED_LIST: {
-        this.api.blocks.insert('list', {'style': 'ordered'}, {}, curBlockIndex);
-        break;
-      }
-
-      case MD_TYPE.QUOTE: {
-        this.api.blocks.insert('quote', {}, {}, curBlockIndex);
-        break;
-      }
-
-      case MD_TYPE.CODE: {
-        this.api.blocks.insert('code', {}, {}, curBlockIndex);
-        break;
-      }
-
-      default: {
-        console.log("not supported")
-      }
+    if(!isInvalid) {
+      this.api.blocks.delete(curBlockIndex);
+      this.api.blocks.insert(type, toolData, config, curBlockIndex);
+          // set cursor to first char
+      this.api.caret.setToBlock(curBlockIndex, 'start');
     }
-
-    // set cursor to first char
-    this.api.caret.setToBlock(curBlockIndex, 'start');
   }
 
   /**
@@ -291,15 +168,15 @@ export default class Paragraph {
       const mention = `<span class="${mentionClass}" contenteditable="false" id="${mentionClass}" tabindex="1" style="opacity: 1;">.</span>`;
       const mentionId = `#${mentionClass}`;
 
-      this.insertHtmlAtCaret(mention);
+      insertHtmlAtCaret(mention);
 
-      this.insertHtmlAtCaret(ANCHOR.SPACE);
-      this.insertHtmlAtCaret(ANCHOR.SPACE);
+      insertHtmlAtCaret(ANCHOR.SPACE);
+      insertHtmlAtCaret(ANCHOR.SPACE);
 
       const mentionParent = document.querySelector(mentionId).parentElement
       console.log('mentionParent ', mentionParent.innerHTML )
       mentionParent.innerHTML = mentionParent.innerHTML.replace('@' + mention, mention)
-      this.selectNode(document.querySelector(mentionId));
+      selectNode(document.querySelector(mentionId));
     }
   }
 
