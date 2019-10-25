@@ -15,11 +15,12 @@ export const MD_TYPE = {
 
 // see https://www.markdownguide.org/basic-syntax/
 const MD_REG = {
-  BOLD: new RegExp(/\*\*(.*?)\*\*/),
-  ITALIC: new RegExp(/__(.*?)__/),
+  // BOLD_old: new RegExp(/\*\*(.*?)\*\*/),
+  BOLD: new RegExp(/\*\*([\S]{1,})\*\*/),
+  ITALIC: new RegExp(/__([\S]{1,})__/),
   // NOTE:  marker is extended
-  MARKER: new RegExp(/==(.*?)==/),
-  INLINECODE: new RegExp(/\`(.*?)\`/)
+  MARKER: new RegExp(/==([\S]{1,})==/),
+  INLINECODE: new RegExp(/\`([\S]{1,})\`/)
 }
 
 /**
