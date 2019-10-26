@@ -11,7 +11,7 @@ export const ANCHOR = {
  * supported markdown syntax constants 
  * NOTE:  inline markdown syntax is not included, like bold/italic/inline-code etc..
  */
-export const MD_TYPE = {
+const MD_TYPE = {
   HEADER_1: "HEADER_1",
   HEADER_2: "HEADER_2",
   HEADER_3: "HEADER_3",

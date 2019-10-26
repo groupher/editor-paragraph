@@ -3,7 +3,6 @@ import "./index.css";
 import {
   checkMarkdownSyntax,
   checkInlineMarkdownSyntax,
-  MD_TYPE,
   ANCHOR,
   insertHtmlAtCaret,
   selectNode,
