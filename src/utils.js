@@ -1,263 +1,261 @@
+/**
+ * some hidden dom anchors for editor.js hack 
+ * 
+ */
 export const ANCHOR = {
-  'SPACE': '&nbsp;',
-  'INLINE_MD': 'inline_tmp_anchor',
-}
-
-export const MD_TYPE = {
-  "HEADER_1": "HEADER_1",
-  "HEADER_2": "HEADER_2",
-  "HEADER_3": "HEADER_3",
-  "UNORDERED_LIST": "UNORDERED_LIST",
-  "ORDERED_LIST": "ORDERED_LIST",
-  "QUOTE": "QUOTE",
-  "CODE": "CODE",
-}
-
-// see https://www.markdownguide.org/basic-syntax/
-const MD_REG = {
-  BOLD: new RegExp(/\*\*(.*?)\*\*/),
-  BOLD2: new RegExp(/__(.*?)__/),
-  ITALIC: new RegExp(/_(.*?)_/),
-  ITALIC2: new RegExp(/\*(.*?)\*/),
-  // NOTE:  marker is extended
-  MARKER: new RegExp(/==(.*?)==/),
-  INLINECODE: new RegExp(/\`(.*?)\`/)
-}
+  SPACE: "&nbsp;",
+  INLINE_MD: "inline_tmp_anchor"
+};
 
 /**
- * TODO
+ * supported markdown syntax constants 
+ * NOTE:  inline markdown syntax is not included, like bold/italic/inline-code etc..
+ */
+const MD_TYPE = {
+  HEADER_1: "HEADER_1",
+  HEADER_2: "HEADER_2",
+  HEADER_3: "HEADER_3",
+  UNORDERED_LIST: "UNORDERED_LIST",
+  ORDERED_LIST: "ORDERED_LIST",
+  QUOTE: "QUOTE",
+  CODE: "CODE"
+};
+
+/**
+ * Base RegExp to detect inline markdown syntax
+ * see https://www.markdownguide.org/basic-syntax/
+ */
+const MD_REG = {
+  // BOLD_old: new RegExp(/\*\*(.*?)\*\*/),
+  BOLD: new RegExp(/\*\*([\S]{1,})\*\*/),
+  ITALIC: new RegExp(/__([\S]{1,})__/),
+  // NOTE:  marker is extended
+  MARKER: new RegExp(/==([\S]{1,})==/),
+  INLINECODE: new RegExp(/\`([\S]{1,})\`/)
+};
+
+/**
+ * check main markdown syntax like header, code, list, quote etc
+ * supported syntax are list in MD_TYPE
  *
- * @param {{data: ParagraphData, config: object, api: object}}
- *   data — previously saved data
- *   config - user config for Tool
- *   api - Editor.js API
+ * @param curBlock {object} editor.js's edit block
+ * @param data {string} current input data, data === ' ' means input something followed by a space
+ *        which is used to trigger the markdown block
  */
 export const checkMarkdownSyntax = function(curBlock, data) {
-  const blockText = curBlock.textContent.trim()
-  let isValidMDStatus = true
-  let MDType = ""
+  const blockText = curBlock.textContent.trim();
+  let isValidMDStatus = true;
+  let MDType = "";
+  const isFollowedBySpace = data === " " ? true : false;
 
-  // TODO:  length check if blockText.length > 6 break
+  // if input length is larger then longest markdown sytax(###### ), is no need to check
+  if (blockText.length > 7) return { isValidMDStatus: false, MDType };
 
-  switch(true) {
-    case blockText === '#' && data === ' ': {
-      MDType = MD_TYPE.HEADER_1
-      break
+  switch (true) {
+    case blockText === "#" && isFollowedBySpace: {
+      MDType = MD_TYPE.HEADER_1;
+      break;
     }
-    case blockText === '##' && data === ' ': {
-      MDType = MD_TYPE.HEADER_2
-      break
-    }
-
-    case blockText === '###' && data === ' ': {
-      MDType = MD_TYPE.HEADER_3
-      break
+    case blockText === "##" && isFollowedBySpace: {
+      MDType = MD_TYPE.HEADER_2;
+      break;
     }
 
-    case blockText === '####' && data === ' ': {
-      MDType = MD_TYPE.HEADER_3
-      break
+    case (blockText === "###" ||
+      blockText === "####" ||
+      blockText === "#####" ||
+      blockText === "######") &&
+      isFollowedBySpace: {
+      MDType = MD_TYPE.HEADER_3;
+      break;
     }
 
-    case blockText === '#####' && data === ' ': {
-      MDType = MD_TYPE.HEADER_3
-      break
+    case blockText === "-" && isFollowedBySpace: {
+      MDType = MD_TYPE.UNORDERED_LIST;
+      break;
     }
 
-    case blockText === '######' && data === ' ': {
-      MDType = MD_TYPE.HEADER_3
-      break
+    case blockText === "1" && isFollowedBySpace: {
+      MDType = MD_TYPE.ORDERED_LIST;
+      break;
     }
 
-    case blockText === '-' && data === ' ': {
-      MDType = MD_TYPE.UNORDERED_LIST
-      break
+    case blockText === ">" && isFollowedBySpace: {
+      MDType = MD_TYPE.QUOTE;
+      break;
     }
 
-    case blockText === '1' && data === ' ': {
-      MDType = MD_TYPE.ORDERED_LIST
-      break
-    }
-    
-    case blockText === '>' && data === ' ': {
-      MDType = MD_TYPE.QUOTE
-      break
-    }
-
-    case blockText === '```': {
-      MDType = MD_TYPE.CODE
-      break
+    case blockText === "```": {
+      MDType = MD_TYPE.CODE;
+      break;
     }
 
     default: {
-      isValidMDStatus = false
+      isValidMDStatus = false;
     }
   }
 
-  return { isValidMDStatus, MDType }
-}
+  return { isValidMDStatus, MDType };
+};
 
 export const markdownBlockConfig = function(type) {
-  switch(type) {
-    case MD_TYPE.HEADER_1: 
+  switch (type) {
+    case MD_TYPE.HEADER_1:
       return {
-        type: 'header',
-        toolData: {'level': 1},
-        config: {},
-      }
-    case MD_TYPE.HEADER_2: 
+        type: "header",
+        toolData: { level: 1 },
+        config: {}
+      };
+    case MD_TYPE.HEADER_2:
       return {
-        type: 'header',
-        toolData: {'level': 2},
-        config: {},
-      }
-    case MD_TYPE.HEADER_3: 
+        type: "header",
+        toolData: { level: 2 },
+        config: {}
+      };
+    case MD_TYPE.HEADER_3:
       return {
-        type: 'header',
-        toolData: {'level': 3},
-        config: {},
-      }
-    
-    case MD_TYPE.UNORDERED_LIST: 
-      return {
-        type: 'list',
-        toolData: {'style': 'unordered'},
-        config: {},
-      }
+        type: "header",
+        toolData: { level: 3 },
+        config: {}
+      };
 
-    case MD_TYPE.ORDERED_LIST: 
+    case MD_TYPE.UNORDERED_LIST:
       return {
-        type: 'list',
-        toolData: {'style': 'ordered'},
-        config: {},
-      }
-    
-    case MD_TYPE.QUOTE: 
-      return {
-        type: 'quote',
-        toolData: {},
-        config: {},
-      }
+        type: "list",
+        toolData: { style: "unordered" },
+        config: {}
+      };
 
-    case MD_TYPE.CODE: 
+    case MD_TYPE.ORDERED_LIST:
       return {
-        type: 'code',
+        type: "list",
+        toolData: { style: "ordered" },
+        config: {}
+      };
+
+    case MD_TYPE.QUOTE:
+      return {
+        type: "quote",
         toolData: {},
-        config: {},
-      }
+        config: {}
+      };
+
+    case MD_TYPE.CODE:
+      return {
+        type: "code",
+        toolData: {},
+        config: {}
+      };
 
     default: {
-      return { isInvalid: false, type: '', toolData: '', config: '' }
+      return { isInvalid: false, type: "", toolData: "", config: "" };
     }
   }
-}
+};
+
+// parse the match info given by string.match(regex)
+const parseMatchTexts = function(texts) {
+  return {
+    md: texts[0],
+    content: texts[1],
+    isValid: true // texts[1].length > 0
+  };
+};
 
 // inline markdown syntax
 export const checkInlineMarkdownSyntax = function(curBlock, data) {
-  const blockText = curBlock.textContent.trim()
-  const { BOLD, BOLD2 } = MD_REG
+  const blockText = curBlock.textContent.trim();
+  const { BOLD, ITALIC, MARKER, INLINECODE } = MD_REG;
 
-  const boldTexts = blockText.match(BOLD) || blockText.match(BOLD2)
-  if(boldTexts) {
-    const content = boldTexts[0]
-    const rawContent = boldTexts[1]
-
-    return { isValid: true, md: content, html: `<b>${rawContent}</b>` }
+  const boldTexts = blockText.match(BOLD);
+  if (boldTexts) {
+    const { isValid, md, content } = parseMatchTexts(boldTexts);
+    return { isValid, md, html: `<b>${content}</b>` };
   }
 
-  return { isValid: false, text: ''}
-  // blockText.match(boldReg) ...
-  // then return replace string
-}
+  const markerTexts = blockText.match(MARKER);
+  if (markerTexts) {
+    const { isValid, md, content } = parseMatchTexts(markerTexts);
+    return { isValid, md, html: `<mark class="cdx-marker">${content}</mark>` };
+  }
 
+  const italicTexts = blockText.match(ITALIC);
+  if (italicTexts) {
+    const { isValid, md, content } = parseMatchTexts(italicTexts);
+    return { isValid, md, html: `<i>${content}</i>` };
+  }
 
-  // NOTE:  html is string
-  // see: https://stackoverflow.com/questions/6690752/insert-html-at-caret-in-a-contenteditable-div
-  // demo: http://jsfiddle.net/jwvha/1/
-  export const insertHtmlAtCaret = function(html) {
-    let sel, range;
+  const inlineCodeTexts = blockText.match(INLINECODE);
+  if (inlineCodeTexts) {
+    const { isValid, md, content } = parseMatchTexts(inlineCodeTexts);
+    return { isValid, md, html: `<code class="inline-code">${content}</code>` };
+  }
 
-    if (window.getSelection) {
-      // IE9 and non-IE
-      sel = window.getSelection();
-      if (sel.getRangeAt && sel.rangeCount) {
-        range = sel.getRangeAt(0);
-        range.deleteContents();
+  return { isValid: false, text: "" };
+};
 
-        // Range.createContextualFragment() would be useful here but is
-        // non-standard and not supported in all browsers (IE9, for one)
-        const el = document.createElement('div');
+// NOTE:  html is string
+// see: https://stackoverflow.com/questions/6690752/insert-html-at-caret-in-a-contenteditable-div
+// demo: http://jsfiddle.net/jwvha/1/
+export const insertHtmlAtCaret = function(html) {
+  let sel, range;
 
-        el.innerHTML = html;
-        var frag = document.createDocumentFragment(), node, lastNode;
+  if (window.getSelection) {
+    // IE9 and non-IE
+    sel = window.getSelection();
+    if (sel.getRangeAt && sel.rangeCount) {
+      range = sel.getRangeAt(0);
+      range.deleteContents();
 
-        while ( (node = el.firstChild) ) {
-          lastNode = frag.appendChild(node);
-        }
-        range.insertNode(frag);
+      // Range.createContextualFragment() would be useful here but is
+      // non-standard and not supported in all browsers (IE9, for one)
+      const el = document.createElement("div");
 
-        // Preserve the selection
-        if (lastNode) {
-          range = range.cloneRange();
-          range.setStartAfter(lastNode);
-          range.collapse(true);
-          sel.removeAllRanges();
-          sel.addRange(range);
-        }
+      el.innerHTML = html;
+      var frag = document.createDocumentFragment(),
+        node,
+        lastNode;
+
+      while ((node = el.firstChild)) {
+        lastNode = frag.appendChild(node);
+      }
+      range.insertNode(frag);
+
+      // Preserve the selection
+      if (lastNode) {
+        range = range.cloneRange();
+        range.setStartAfter(lastNode);
+        range.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(range);
       }
     }
   }
+};
 
-  // select a html node
-  export const selectNode = function(node) {
-    if (document.body.createTextRange) {
-      const range = document.body.createTextRange();
+// select a html node
+export const selectNode = function(node) {
+  if (document.body.createTextRange) {
+    const range = document.body.createTextRange();
 
-      range.moveToElementText(node);
-      range.select();
-    } else if (window.getSelection) {
-      const selection = window.getSelection();
-      const range = document.createRange();
+    range.moveToElementText(node);
+    range.select();
+  } else if (window.getSelection) {
+    const selection = window.getSelection();
+    const range = document.createRange();
 
-      // range.collapse(true);
-      // const startIndex = 6;
-      // const endIndex = 7; // node.textContent.length;
+    // range.collapse(true);
+    // const startIndex = 6;
+    // const endIndex = 7; // node.textContent.length;
 
-      // range.setStart(node.childNodes[0], startIndex);
-      // range.setEnd(node.childNodes[0], endIndex);
+    // range.setStart(node.childNodes[0], startIndex);
+    // range.setEnd(node.childNodes[0], endIndex);
 
-      range.selectNodeContents(node);
-      selection.removeAllRanges();
-      selection.addRange(range);
-      // console.log('2 -->', range.extractContents());
-    } else {
-      console.warn('Could not select text in node: Unsupported browser.');
-    }
+    range.selectNodeContents(node);
+    selection.removeAllRanges();
+    selection.addRange(range);
+    // console.log('2 -->', range.extractContents());
+  } else {
+    console.warn("Could not select text in node: Unsupported browser.");
   }
-
-  // move caret to next n count
-  export const moveCaret = function(win, charCount) {
-    var sel, range;
-
-    if (win.getSelection) {
-      sel = win.getSelection();
-      if (sel.rangeCount > 0) {
-        var textNode = sel.anchorNode.parentNode; // sel.focusNode;
-
-        // debugger;
-
-        var newOffset = sel.focusOffset + charCount;
-
-        // sel.collapse(textNode, Math.min(textNode.length, newOffset));
-        sel.collapse(textNode, 3);
-      }
-    } else if ( (sel = win.document.selection) ) {
-      if (sel.type != 'Control') {
-        range = sel.createRange();
-        range.move('character', charCount);
-        range.select();
-      }
-    }
-  }
-
-
+};

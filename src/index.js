@@ -1,15 +1,17 @@
-import './index.css'
+import "./index.css";
 
 import {
   checkMarkdownSyntax,
   checkInlineMarkdownSyntax,
+<<<<<<< HEAD
   MD_TYPE,
+=======
+>>>>>>> 6a770daf51e20bc1a0cba8d7c6b9f3b1db0960e2
   ANCHOR,
   insertHtmlAtCaret,
-  moveCaret,
   selectNode,
   markdownBlockConfig
-} from './utils'
+} from "./utils";
 
 /**
  * Base Paragraph Block for the Editor.js.
@@ -42,7 +44,11 @@ export default class Paragraph {
    * @constructor
    */
   static get DEFAULT_PLACEHOLDER() {
+<<<<<<< HEAD
     return "输入 'Tab' 快捷插入内容";
+=======
+    return "";
+>>>>>>> 6a770daf51e20bc1a0cba8d7c6b9f3b1db0960e2
   }
 
   /**
@@ -58,8 +64,8 @@ export default class Paragraph {
 
     this._CSS = {
       block: this.api.styles.block,
-      wrapper: 'ce-paragraph',
-      mention: 'cdx-mention'
+      wrapper: "ce-paragraph",
+      mention: "cdx-mention"
     };
     this.onKeyUp = this.onKeyUp.bind(this);
 
@@ -67,15 +73,20 @@ export default class Paragraph {
      * Placeholder for paragraph if it is first Block
      * @type {string}
      */
-    this._placeholder = config.placeholder ? config.placeholder : Paragraph.DEFAULT_PLACEHOLDER;
+    this._placeholder = config.placeholder
+      ? config.placeholder
+      : Paragraph.DEFAULT_PLACEHOLDER;
     this._data = {};
     this._element = this.drawView();
 
     this.data = data;
   }
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 6a770daf51e20bc1a0cba8d7c6b9f3b1db0960e2
   /**
    * Check if text content is empty and set empty string to inner html.
    * We need this because some browsers (e.g. Safari) insert <br> into empty contenteditanle elements
@@ -83,17 +94,17 @@ export default class Paragraph {
    * @param {KeyboardEvent} e - key up event
    */
   onKeyUp(e) {
-    if (e.code !== 'Backspace' && e.code !== 'Delete') {
+    if (e.code !== "Backspace" && e.code !== "Delete") {
       return;
     }
 
-    console.log('delete detect');
+    console.log("delete detect");
     this.deleteTagsIfNeed();
 
     const { textContent } = this._element;
 
-    if (textContent === '') {
-      this._element.innerHTML = '';
+    if (textContent === "") {
+      this._element.innerHTML = "";
     }
   }
 
@@ -104,34 +115,43 @@ export default class Paragraph {
    * delete tags like mention, ..
    * @return {void}
    * @private
-  */
+   */
   deleteTagsIfNeed() {
     if (window.getSelection) {
       let sel = window.getSelection();
-      // console.log("sel: ", sel)
-      // console.log("sel.anchorNode.parentNode.nodeName: ", sel.anchorNode.parentNode.nodeName)
-      // console.log("sel.anchorNode.parentNode.className", sel.anchorNode.parentNode.className)
-      // console.log("sel.anchorNode.parentNode.remove: ", sel.anchorNode.parentNode.remove)
 
       if (sel.anchorNode.parentNode.className === this._CSS.mention) {
         sel.anchorNode.parentNode.remove();
       }
+    } else {
+      console.log(
+        "editor paragraph plugin, window dfgetSelection is not supported."
+      );
     }
   }
 
+  /**
+   * handle inline markdown syntax like bold, italic, inline-code etc..
+   * @return {HTMLDivElement}
+   * @private
+   */
   handleInlineMDShortcut(ev) {
     const curBlockIndex = this.api.blocks.getCurrentBlockIndex();
     const curBlock = this.api.blocks.getBlockByIndex(curBlockIndex);
 
+<<<<<<< HEAD
     const { isValid, md, html } = checkInlineMarkdownSyntax(curBlock, ev.data)
+=======
+    const { isValid, md, html } = checkInlineMarkdownSyntax(curBlock, ev.data);
+>>>>>>> 6a770daf51e20bc1a0cba8d7c6b9f3b1db0960e2
     if (isValid) {
-      const INLINE_MD_HOLDER = `<span id="${ANCHOR.INLINE_MD}" />`
+      const INLINE_MD_HOLDER = `<span id="${ANCHOR.INLINE_MD}" />`;
 
       // 改变 innerHTML 以后光标会到内容的最开始，需要埋一个点，完事后在选中
-      insertHtmlAtCaret(INLINE_MD_HOLDER)
-      ev.target.innerHTML = ev.target.innerHTML.replace(md, html)
+      insertHtmlAtCaret(INLINE_MD_HOLDER);
+      ev.target.innerHTML = ev.target.innerHTML.replace(md, html);
       selectNode(document.querySelector(`#${ANCHOR.INLINE_MD}`));
-      document.querySelector(`#${ANCHOR.INLINE_MD}`).remove()
+      document.querySelector(`#${ANCHOR.INLINE_MD}`).remove();
 
       // 防止插入粗体以后以后输入一直是粗体。。
       insertHtmlAtCaret(ANCHOR.SPACE);
@@ -141,26 +161,34 @@ export default class Paragraph {
   // handle markdown shortcuts
   /**
    * handle markdown shortcuts
-   * currently support header, list
+   * currently support header, list, code, etc...
    * @param ev {HTMLElementEvent}
    * @return {void}
    * @private
-  */
+   */
   handleMDShortcut(ev) {
     const curBlockIndex = this.api.blocks.getCurrentBlockIndex();
     const curBlock = this.api.blocks.getBlockByIndex(curBlockIndex);
 
+<<<<<<< HEAD
     const { isValidMDStatus, MDType } = checkMarkdownSyntax(curBlock, ev.data)
+=======
+    const { isValidMDStatus, MDType } = checkMarkdownSyntax(curBlock, ev.data);
+>>>>>>> 6a770daf51e20bc1a0cba8d7c6b9f3b1db0960e2
     if (!isValidMDStatus) return false;
 
     // delete current block
-    const { isInvalid, type, toolData, config } = markdownBlockConfig(MDType)
+    const { isInvalid, type, toolData, config } = markdownBlockConfig(MDType);
 
     if (!isInvalid) {
       this.api.blocks.delete(curBlockIndex);
       this.api.blocks.insert(type, toolData, config, curBlockIndex);
       // set cursor to first char
+<<<<<<< HEAD
       this.api.caret.setToBlock(curBlockIndex, 'start');
+=======
+      this.api.caret.setToBlock(curBlockIndex, "start");
+>>>>>>> 6a770daf51e20bc1a0cba8d7c6b9f3b1db0960e2
     }
   }
 
@@ -169,11 +197,21 @@ export default class Paragraph {
    * @param ev {HTMLElementEvent}
    * @return {HTMLElementEvent}
    * @private
-  */
+   */
   handleMention(ev) {
+<<<<<<< HEAD
     if (ev.data === '@') {
       const mentionClass = this._CSS.mention
       const mention = `<span class="${mentionClass}" contenteditable="false" id="${mentionClass}" tabindex="1" style="opacity: 1;">.</span>`;
+=======
+    if (ev.data === "@") {
+      const mentionClass = this._CSS.mention;
+      const mention = `<span class="${
+        mentionClass
+      }" contenteditable="false" id="${
+        mentionClass
+      }" tabindex="1" style="opacity: 1;">.</span>`;
+>>>>>>> 6a770daf51e20bc1a0cba8d7c6b9f3b1db0960e2
       const mentionId = `#${mentionClass}`;
 
       insertHtmlAtCaret(mention);
@@ -181,9 +219,18 @@ export default class Paragraph {
       insertHtmlAtCaret(ANCHOR.SPACE);
       insertHtmlAtCaret(ANCHOR.SPACE);
 
+<<<<<<< HEAD
       const mentionParent = document.querySelector(mentionId).parentElement
       console.log('mentionParent ', mentionParent.innerHTML)
       mentionParent.innerHTML = mentionParent.innerHTML.replace('@' + mention, mention)
+=======
+      const mentionParent = document.querySelector(mentionId).parentElement;
+      console.log("mentionParent ", mentionParent.innerHTML);
+      mentionParent.innerHTML = mentionParent.innerHTML.replace(
+        "@" + mention,
+        mention
+      );
+>>>>>>> 6a770daf51e20bc1a0cba8d7c6b9f3b1db0960e2
       selectNode(document.querySelector(mentionId));
     }
   }
@@ -194,13 +241,13 @@ export default class Paragraph {
    * @private
    */
   drawView() {
-    let div = document.createElement('DIV');
+    let div = document.createElement("DIV");
 
     div.classList.add(this._CSS.wrapper, this._CSS.block);
     div.contentEditable = true;
     div.dataset.placeholder = this._placeholder;
 
-    div.addEventListener('keyup', this.onKeyUp);
+    div.addEventListener("keyup", this.onKeyUp);
 
     // const MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
     // let observer = new MutationObserver(myFunction);
@@ -208,12 +255,26 @@ export default class Paragraph {
     //   childList: true
     // });
 
+<<<<<<< HEAD
     this.api.listeners.on(div, 'input', (ev) => {
       this.handleMDShortcut(ev);
       this.handleInlineMDShortcut(ev);
       this.handleMention(ev);
       // console.log('Button clicked!');
     }, true);
+=======
+    this.api.listeners.on(
+      div,
+      "input",
+      ev => {
+        this.handleMDShortcut(ev);
+        this.handleInlineMDShortcut(ev);
+        this.handleMention(ev);
+        // console.log('Button clicked!');
+      },
+      true
+    );
+>>>>>>> 6a770daf51e20bc1a0cba8d7c6b9f3b1db0960e2
 
     // div.addEventListener('input', (ev) => {
     //   this.handleMDShortcut(ev);
@@ -256,7 +317,7 @@ export default class Paragraph {
    * @public
    */
   validate(savedData) {
-    if (savedData.text.trim() === '') {
+    if (savedData.text.trim() === "") {
       return false;
     }
 
@@ -293,8 +354,8 @@ export default class Paragraph {
    */
   static get conversionConfig() {
     return {
-      export: 'text', // to convert Paragraph to other block, use 'text' property of saved data
-      import: 'text' // to covert other block's exported string to Paragraph, fill 'text' property of tool data
+      export: "text", // to convert Paragraph to other block, use 'text' property of saved data
+      import: "text" // to covert other block's exported string to Paragraph, fill 'text' property of tool data
     };
   }
 
@@ -304,7 +365,7 @@ export default class Paragraph {
   static get sanitize() {
     return {
       text: {
-        br: true,
+        br: true
       }
     };
   }
@@ -333,7 +394,7 @@ export default class Paragraph {
   set data(data) {
     this._data = data || {};
 
-    this._element.innerHTML = this._data.text || '';
+    this._element.innerHTML = this._data.text || "";
   }
 
   /**
@@ -344,7 +405,11 @@ export default class Paragraph {
    */
   static get pasteConfig() {
     return {
+<<<<<<< HEAD
       tags: ['P']
+=======
+      tags: ["P"]
+>>>>>>> 6a770daf51e20bc1a0cba8d7c6b9f3b1db0960e2
     };
   }
 }
