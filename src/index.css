@@ -10,6 +10,10 @@ font-weight: normal;
 opacity: 0;
 }
 
+.ce-paragraph[data-placeholder]:focus:empty::before{
+  opacity: 0.5;
+}
+
 /** Show placeholder at the first paragraph if Editor is empty */
 .codex-editor--empty .ce-block:first-child .ce-paragraph[data-placeholder]:empty::before {
 opacity: 1;

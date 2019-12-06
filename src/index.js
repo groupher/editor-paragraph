@@ -1,9 +1,9 @@
 import './index.css'
 
-import { 
-  checkMarkdownSyntax, 
-  checkInlineMarkdownSyntax, 
-  MD_TYPE, 
+import {
+  checkMarkdownSyntax,
+  checkInlineMarkdownSyntax,
+  MD_TYPE,
   ANCHOR,
   insertHtmlAtCaret,
   moveCaret,
@@ -27,6 +27,14 @@ import {
  * @property {String} text — Paragraph's content. Can include HTML tags: <a><b><i>
  */
 export default class Paragraph {
+  static get toolbox() {
+    return {
+      icon: '<svg width="14" t="1575341316491" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3017" width="200" height="200"><path d="M537.6 281.6H358.4v256h179.2a128 128 0 1 0 0-256zM256 153.6h332.8v1.28a256 256 0 0 1 0 509.44V665.6H358.4v204.8a51.2 51.2 0 0 1-51.2 51.2H256a51.2 51.2 0 0 1-51.2-51.2V204.8a51.2 51.2 0 0 1 51.2-51.2z" p-id="3018"></path></svg>',
+      title: '段落'
+    };
+  };
+
+
   /**
    * Default placeholder for Paragraph Tool
    *
@@ -34,7 +42,7 @@ export default class Paragraph {
    * @constructor
    */
   static get DEFAULT_PLACEHOLDER() {
-    return '';
+    return "输入 'Tab' 快捷插入内容";
   }
 
   /**
@@ -45,7 +53,7 @@ export default class Paragraph {
    *   config - user config for Tool
    *   api - Editor.js API
    */
-  constructor({data, config, api}) {
+  constructor({ data, config, api }) {
     this.api = api;
 
     this._CSS = {
@@ -66,7 +74,7 @@ export default class Paragraph {
     this.data = data;
   }
 
-  
+
 
   /**
    * Check if text content is empty and set empty string to inner html.
@@ -82,7 +90,7 @@ export default class Paragraph {
     console.log('delete detect');
     this.deleteTagsIfNeed();
 
-    const {textContent} = this._element;
+    const { textContent } = this._element;
 
     if (textContent === '') {
       this._element.innerHTML = '';
@@ -105,7 +113,7 @@ export default class Paragraph {
       // console.log("sel.anchorNode.parentNode.className", sel.anchorNode.parentNode.className)
       // console.log("sel.anchorNode.parentNode.remove: ", sel.anchorNode.parentNode.remove)
 
-      if(sel.anchorNode.parentNode.className === this._CSS.mention) {
+      if (sel.anchorNode.parentNode.className === this._CSS.mention) {
         sel.anchorNode.parentNode.remove();
       }
     }
@@ -114,7 +122,7 @@ export default class Paragraph {
   handleInlineMDShortcut(ev) {
     const curBlockIndex = this.api.blocks.getCurrentBlockIndex();
     const curBlock = this.api.blocks.getBlockByIndex(curBlockIndex);
-  
+
     const { isValid, md, html } = checkInlineMarkdownSyntax(curBlock, ev.data)
     if (isValid) {
       const INLINE_MD_HOLDER = `<span id="${ANCHOR.INLINE_MD}" />`
@@ -143,15 +151,15 @@ export default class Paragraph {
     const curBlock = this.api.blocks.getBlockByIndex(curBlockIndex);
 
     const { isValidMDStatus, MDType } = checkMarkdownSyntax(curBlock, ev.data)
-    if(!isValidMDStatus) return false;
+    if (!isValidMDStatus) return false;
 
     // delete current block
     const { isInvalid, type, toolData, config } = markdownBlockConfig(MDType)
 
-    if(!isInvalid) {
+    if (!isInvalid) {
       this.api.blocks.delete(curBlockIndex);
       this.api.blocks.insert(type, toolData, config, curBlockIndex);
-          // set cursor to first char
+      // set cursor to first char
       this.api.caret.setToBlock(curBlockIndex, 'start');
     }
   }
@@ -163,7 +171,7 @@ export default class Paragraph {
    * @private
   */
   handleMention(ev) {
-    if(ev.data === '@') {
+    if (ev.data === '@') {
       const mentionClass = this._CSS.mention
       const mention = `<span class="${mentionClass}" contenteditable="false" id="${mentionClass}" tabindex="1" style="opacity: 1;">.</span>`;
       const mentionId = `#${mentionClass}`;
@@ -174,7 +182,7 @@ export default class Paragraph {
       insertHtmlAtCaret(ANCHOR.SPACE);
 
       const mentionParent = document.querySelector(mentionId).parentElement
-      console.log('mentionParent ', mentionParent.innerHTML )
+      console.log('mentionParent ', mentionParent.innerHTML)
       mentionParent.innerHTML = mentionParent.innerHTML.replace('@' + mention, mention)
       selectNode(document.querySelector(mentionId));
     }
@@ -205,7 +213,7 @@ export default class Paragraph {
       this.handleInlineMDShortcut(ev);
       this.handleMention(ev);
       // console.log('Button clicked!');
-   }, true);
+    }, true);
 
     // div.addEventListener('input', (ev) => {
     //   this.handleMDShortcut(ev);
@@ -233,7 +241,7 @@ export default class Paragraph {
    */
   merge(data) {
     let newData = {
-      text : this.data.text + data.text
+      text: this.data.text + data.text
     };
 
     this.data = newData;
@@ -336,7 +344,7 @@ export default class Paragraph {
    */
   static get pasteConfig() {
     return {
-      tags: [ 'P' ]
+      tags: ['P']
     };
   }
 }
