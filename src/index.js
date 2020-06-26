@@ -1,18 +1,5 @@
+import { enhanceBlock } from "@groupher/editor-utils";
 import "./index.css";
-
-import {
-  checkMarkdownSyntax,
-  checkInlineMarkdownSyntax,
-<<<<<<< HEAD
-  MD_TYPE,
-=======
->>>>>>> 6a770daf51e20bc1a0cba8d7c6b9f3b1db0960e2
-  ANCHOR,
-  insertHtmlAtCaret,
-  selectNode,
-  markdownBlockConfig
-} from "./utils";
-
 /**
  * Base Paragraph Block for the Editor.js.
  * Represents simple paragraph
@@ -31,11 +18,11 @@ import {
 export default class Paragraph {
   static get toolbox() {
     return {
-      icon: '<svg width="14" t="1575341316491" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3017" width="200" height="200"><path d="M537.6 281.6H358.4v256h179.2a128 128 0 1 0 0-256zM256 153.6h332.8v1.28a256 256 0 0 1 0 509.44V665.6H358.4v204.8a51.2 51.2 0 0 1-51.2 51.2H256a51.2 51.2 0 0 1-51.2-51.2V204.8a51.2 51.2 0 0 1 51.2-51.2z" p-id="3018"></path></svg>',
-      title: '段落'
+      icon:
+        '<svg width="14" t="1575341316491" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3017" width="200" height="200"><path d="M537.6 281.6H358.4v256h179.2a128 128 0 1 0 0-256zM256 153.6h332.8v1.28a256 256 0 0 1 0 509.44V665.6H358.4v204.8a51.2 51.2 0 0 1-51.2 51.2H256a51.2 51.2 0 0 1-51.2-51.2V204.8a51.2 51.2 0 0 1 51.2-51.2z" p-id="3018"></path></svg>',
+      title: "段落",
     };
-  };
-
+  }
 
   /**
    * Default placeholder for Paragraph Tool
@@ -44,11 +31,7 @@ export default class Paragraph {
    * @constructor
    */
   static get DEFAULT_PLACEHOLDER() {
-<<<<<<< HEAD
     return "输入 'Tab' 快捷插入内容";
-=======
-    return "";
->>>>>>> 6a770daf51e20bc1a0cba8d7c6b9f3b1db0960e2
   }
 
   /**
@@ -65,7 +48,7 @@ export default class Paragraph {
     this._CSS = {
       block: this.api.styles.block,
       wrapper: "ce-paragraph",
-      mention: "cdx-mention"
+      mention: "cdx-mention",
     };
     this.onKeyUp = this.onKeyUp.bind(this);
 
@@ -82,11 +65,6 @@ export default class Paragraph {
     this.data = data;
   }
 
-<<<<<<< HEAD
-
-
-=======
->>>>>>> 6a770daf51e20bc1a0cba8d7c6b9f3b1db0960e2
   /**
    * Check if text content is empty and set empty string to inner html.
    * We need this because some browsers (e.g. Safari) insert <br> into empty contenteditanle elements
@@ -98,7 +76,6 @@ export default class Paragraph {
       return;
     }
 
-    console.log("delete detect");
     this.deleteTagsIfNeed();
 
     const { textContent } = this._element;
@@ -131,111 +108,6 @@ export default class Paragraph {
   }
 
   /**
-   * handle inline markdown syntax like bold, italic, inline-code etc..
-   * @return {HTMLDivElement}
-   * @private
-   */
-  handleInlineMDShortcut(ev) {
-    const curBlockIndex = this.api.blocks.getCurrentBlockIndex();
-    const curBlock = this.api.blocks.getBlockByIndex(curBlockIndex);
-
-<<<<<<< HEAD
-    const { isValid, md, html } = checkInlineMarkdownSyntax(curBlock, ev.data)
-=======
-    const { isValid, md, html } = checkInlineMarkdownSyntax(curBlock, ev.data);
->>>>>>> 6a770daf51e20bc1a0cba8d7c6b9f3b1db0960e2
-    if (isValid) {
-      const INLINE_MD_HOLDER = `<span id="${ANCHOR.INLINE_MD}" />`;
-
-      // 改变 innerHTML 以后光标会到内容的最开始，需要埋一个点，完事后在选中
-      insertHtmlAtCaret(INLINE_MD_HOLDER);
-      ev.target.innerHTML = ev.target.innerHTML.replace(md, html);
-      selectNode(document.querySelector(`#${ANCHOR.INLINE_MD}`));
-      document.querySelector(`#${ANCHOR.INLINE_MD}`).remove();
-
-      // 防止插入粗体以后以后输入一直是粗体。。
-      insertHtmlAtCaret(ANCHOR.SPACE);
-    }
-  }
-
-  // handle markdown shortcuts
-  /**
-   * handle markdown shortcuts
-   * currently support header, list, code, etc...
-   * @param ev {HTMLElementEvent}
-   * @return {void}
-   * @private
-   */
-  handleMDShortcut(ev) {
-    const curBlockIndex = this.api.blocks.getCurrentBlockIndex();
-    const curBlock = this.api.blocks.getBlockByIndex(curBlockIndex);
-
-<<<<<<< HEAD
-    const { isValidMDStatus, MDType } = checkMarkdownSyntax(curBlock, ev.data)
-=======
-    const { isValidMDStatus, MDType } = checkMarkdownSyntax(curBlock, ev.data);
->>>>>>> 6a770daf51e20bc1a0cba8d7c6b9f3b1db0960e2
-    if (!isValidMDStatus) return false;
-
-    // delete current block
-    const { isInvalid, type, toolData, config } = markdownBlockConfig(MDType);
-
-    if (!isInvalid) {
-      this.api.blocks.delete(curBlockIndex);
-      this.api.blocks.insert(type, toolData, config, curBlockIndex);
-      // set cursor to first char
-<<<<<<< HEAD
-      this.api.caret.setToBlock(curBlockIndex, 'start');
-=======
-      this.api.caret.setToBlock(curBlockIndex, "start");
->>>>>>> 6a770daf51e20bc1a0cba8d7c6b9f3b1db0960e2
-    }
-  }
-
-  /**
-   * handle mention (@)
-   * @param ev {HTMLElementEvent}
-   * @return {HTMLElementEvent}
-   * @private
-   */
-  handleMention(ev) {
-<<<<<<< HEAD
-    if (ev.data === '@') {
-      const mentionClass = this._CSS.mention
-      const mention = `<span class="${mentionClass}" contenteditable="false" id="${mentionClass}" tabindex="1" style="opacity: 1;">.</span>`;
-=======
-    if (ev.data === "@") {
-      const mentionClass = this._CSS.mention;
-      const mention = `<span class="${
-        mentionClass
-      }" contenteditable="false" id="${
-        mentionClass
-      }" tabindex="1" style="opacity: 1;">.</span>`;
->>>>>>> 6a770daf51e20bc1a0cba8d7c6b9f3b1db0960e2
-      const mentionId = `#${mentionClass}`;
-
-      insertHtmlAtCaret(mention);
-
-      insertHtmlAtCaret(ANCHOR.SPACE);
-      insertHtmlAtCaret(ANCHOR.SPACE);
-
-<<<<<<< HEAD
-      const mentionParent = document.querySelector(mentionId).parentElement
-      console.log('mentionParent ', mentionParent.innerHTML)
-      mentionParent.innerHTML = mentionParent.innerHTML.replace('@' + mention, mention)
-=======
-      const mentionParent = document.querySelector(mentionId).parentElement;
-      console.log("mentionParent ", mentionParent.innerHTML);
-      mentionParent.innerHTML = mentionParent.innerHTML.replace(
-        "@" + mention,
-        mention
-      );
->>>>>>> 6a770daf51e20bc1a0cba8d7c6b9f3b1db0960e2
-      selectNode(document.querySelector(mentionId));
-    }
-  }
-
-  /**
    * Create Tool's view
    * @return {HTMLElement}
    * @private
@@ -255,32 +127,7 @@ export default class Paragraph {
     //   childList: true
     // });
 
-<<<<<<< HEAD
-    this.api.listeners.on(div, 'input', (ev) => {
-      this.handleMDShortcut(ev);
-      this.handleInlineMDShortcut(ev);
-      this.handleMention(ev);
-      // console.log('Button clicked!');
-    }, true);
-=======
-    this.api.listeners.on(
-      div,
-      "input",
-      ev => {
-        this.handleMDShortcut(ev);
-        this.handleInlineMDShortcut(ev);
-        this.handleMention(ev);
-        // console.log('Button clicked!');
-      },
-      true
-    );
->>>>>>> 6a770daf51e20bc1a0cba8d7c6b9f3b1db0960e2
-
-    // div.addEventListener('input', (ev) => {
-    //   this.handleMDShortcut(ev);
-    //   this.handleInlineMDShortcut(ev);
-    //   this.handleMention(ev);
-    // });
+    enhanceBlock(div, this.api, { markdown: true });
 
     return div;
   }
@@ -302,7 +149,7 @@ export default class Paragraph {
    */
   merge(data) {
     let newData = {
-      text: this.data.text + data.text
+      text: this.data.text + data.text,
     };
 
     this.data = newData;
@@ -332,7 +179,7 @@ export default class Paragraph {
    */
   save(toolsContent) {
     return {
-      text: toolsContent.innerHTML
+      text: toolsContent.innerHTML,
     };
   }
 
@@ -343,7 +190,7 @@ export default class Paragraph {
    */
   onPaste(event) {
     const data = {
-      text: event.detail.data.innerHTML
+      text: event.detail.data.innerHTML,
     };
 
     this.data = data;
@@ -355,7 +202,7 @@ export default class Paragraph {
   static get conversionConfig() {
     return {
       export: "text", // to convert Paragraph to other block, use 'text' property of saved data
-      import: "text" // to covert other block's exported string to Paragraph, fill 'text' property of tool data
+      import: "text", // to covert other block's exported string to Paragraph, fill 'text' property of tool data
     };
   }
 
@@ -365,8 +212,8 @@ export default class Paragraph {
   static get sanitize() {
     return {
       text: {
-        br: true
-      }
+        br: true,
+      },
     };
   }
 
@@ -405,11 +252,7 @@ export default class Paragraph {
    */
   static get pasteConfig() {
     return {
-<<<<<<< HEAD
-      tags: ['P']
-=======
-      tags: ["P"]
->>>>>>> 6a770daf51e20bc1a0cba8d7c6b9f3b1db0960e2
+      tags: ["P"],
     };
   }
 }
