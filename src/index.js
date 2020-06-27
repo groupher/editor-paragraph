@@ -13,6 +13,7 @@ import {
   freeEnhanceBlock,
   buildLog,
 } from "@groupher/editor-utils";
+
 import "./index.css";
 
 const log = buildLog("paragraph");
