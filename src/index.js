@@ -1,5 +1,3 @@
-import { enhanceBlock } from "@groupher/editor-utils";
-import "./index.css";
 /**
  * Base Paragraph Block for the Editor.js.
  * Represents simple paragraph
@@ -9,6 +7,15 @@ import "./index.css";
  * @license The MIT License (MIT)
  * @version 2.0.0
  */
+
+import {
+  enhanceBlock,
+  freeEnhanceBlock,
+  buildLog,
+} from "@groupher/editor-utils";
+import "./index.css";
+
+const log = buildLog("paragraph");
 
 /**
  * @typedef {Object} ParagraphData
@@ -48,7 +55,6 @@ export default class Paragraph {
     this._CSS = {
       block: this.api.styles.block,
       wrapper: "ce-paragraph",
-      mention: "cdx-mention",
     };
     this.onKeyUp = this.onKeyUp.bind(this);
 
@@ -61,6 +67,8 @@ export default class Paragraph {
       : Paragraph.DEFAULT_PLACEHOLDER;
     this._data = {};
     this._element = this.drawView();
+
+    enhanceBlock(this._element, this.api, { markdown: true });
 
     this.data = data;
   }
@@ -76,8 +84,6 @@ export default class Paragraph {
       return;
     }
 
-    this.deleteTagsIfNeed();
-
     const { textContent } = this._element;
 
     if (textContent === "") {
@@ -87,25 +93,6 @@ export default class Paragraph {
 
   // see: https://stackoverflow.com/questions/2920150/insert-text-at-cursor-in-a-content-editable-div
   // insertTextAtCursor(text)
-
-  /**
-   * delete tags like mention, ..
-   * @return {void}
-   * @private
-   */
-  deleteTagsIfNeed() {
-    if (window.getSelection) {
-      let sel = window.getSelection();
-
-      if (sel.anchorNode.parentNode.className === this._CSS.mention) {
-        sel.anchorNode.parentNode.remove();
-      }
-    } else {
-      console.log(
-        "editor paragraph plugin, window dfgetSelection is not supported."
-      );
-    }
-  }
 
   /**
    * Create Tool's view
@@ -126,9 +113,6 @@ export default class Paragraph {
     // observer.observe(element, {
     //   childList: true
     // });
-
-    enhanceBlock(div, this.api, { markdown: true });
-
     return div;
   }
 
@@ -254,5 +238,8 @@ export default class Paragraph {
     return {
       tags: ["P"],
     };
+  }
+  destroy() {
+    freeEnhanceBlock(this._element, this.api);
   }
 }
