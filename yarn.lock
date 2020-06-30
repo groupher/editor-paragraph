@@ -553,11 +553,13 @@
     lodash "^4.17.11"
     to-fast-properties "^2.0.0"
 
-"@groupher/editor-utils@0.1.39":
-  version "0.1.39"
-  resolved "https://registry.npm.taobao.org/@groupher/editor-utils/download/@groupher/editor-utils-0.1.39.tgz#0b8c380d1d92e3a2538234f6f0495325a2b8481a"
+"@groupher/editor-utils@0.1.45":
+  version "0.1.45"
+  resolved "https://registry.yarnpkg.com/@groupher/editor-utils/-/editor-utils-0.1.45.tgz#41533ea4c2f46626d90a4cb266e2c21d1ae2cb9e"
+  integrity sha512-awAE4z3d5f8mQQ7aB9wNNvh7sO+849H4J73GQarU5h5sDopZi+mpIHfOBerw2cbHH1pilKebu3nzeyIcpYO+jA==
   dependencies:
     debug "^4.1.1"
+    pubsub-js "^1.8.0"
 
 "@webassemblyjs/ast@1.5.13":
   version "1.5.13"
