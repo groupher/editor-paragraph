@@ -553,10 +553,9 @@
     lodash "^4.17.11"
     to-fast-properties "^2.0.0"
 
-"@groupher/editor-utils@0.1.48":
-  version "0.1.48"
-  resolved "https://registry.yarnpkg.com/@groupher/editor-utils/-/editor-utils-0.1.48.tgz#a7d73683ba391a79aed50e018f2b659074599443"
-  integrity sha512-HYEJKlS+KrKgpqaYp5MnAeZZS0kSDHhuYO0vX6nSeTTTbRiSS/4irNxnnC4D6TEHi2jBWjLcRKYsKlA/bCu6Ww==
+"@groupher/editor-utils@0.1.58":
+  version "0.1.58"
+  resolved "https://registry.npm.taobao.org/@groupher/editor-utils/download/@groupher/editor-utils-0.1.58.tgz#2078cf2a6cb468afa9dfe10265d227ed79dc79ee"
   dependencies:
     debug "^4.1.1"
     pubsub-js "^1.8.0"
