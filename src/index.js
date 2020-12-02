@@ -69,6 +69,7 @@ export default class Paragraph {
     this._data = {};
     this._element = this.drawView();
 
+    console.log("enhanceBlock this._element: ", this._element);
     enhanceBlock(this._element, this.api, { markdown: true });
 
     this.data = data;
