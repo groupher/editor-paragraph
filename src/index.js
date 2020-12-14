@@ -24,13 +24,14 @@ const log = buildLog("paragraph");
  * @property {String} text — Paragraph's content. Can include HTML tags: <a><b><i>
  */
 export default class Paragraph {
-  static get toolbox() {
-    return {
-      icon:
-        '<svg width="14" t="1575341316491" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3017" width="200" height="200"><path d="M537.6 281.6H358.4v256h179.2a128 128 0 1 0 0-256zM256 153.6h332.8v1.28a256 256 0 0 1 0 509.44V665.6H358.4v204.8a51.2 51.2 0 0 1-51.2 51.2H256a51.2 51.2 0 0 1-51.2-51.2V204.8a51.2 51.2 0 0 1 51.2-51.2z" p-id="3018"></path></svg>',
-      title: "段落",
-    };
-  }
+  // NOTE:  do not show 'P' in toolbox
+  // static get toolbox() {
+  //   return {
+  //     icon:
+  //       '<svg width="14" t="1575341316491" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3017" width="200" height="200"><path d="M537.6 281.6H358.4v256h179.2a128 128 0 1 0 0-256zM256 153.6h332.8v1.28a256 256 0 0 1 0 509.44V665.6H358.4v204.8a51.2 51.2 0 0 1-51.2 51.2H256a51.2 51.2 0 0 1-51.2-51.2V204.8a51.2 51.2 0 0 1 51.2-51.2z" p-id="3018"></path></svg>',
+  //     title: "段落",
+  //   };
+  // }
 
   /**
    * Default placeholder for Paragraph Tool
@@ -39,7 +40,7 @@ export default class Paragraph {
    * @constructor
    */
   static get DEFAULT_PLACEHOLDER() {
-    return "输入 'Tab' 快捷插入内容";
+    return "正文内容（'Tab' 键快速插入）";
   }
 
   /**
@@ -69,7 +70,6 @@ export default class Paragraph {
     this._data = {};
     this._element = this.drawView();
 
-    console.log("enhanceBlock this._element: ", this._element);
     enhanceBlock(this._element, this.api, { markdown: true });
 
     this.data = data;
