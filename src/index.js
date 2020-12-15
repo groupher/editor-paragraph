@@ -70,7 +70,7 @@ export default class Paragraph {
     this._data = {};
     this._element = this.drawView();
 
-    enhanceBlock(this._element, this.api, { markdown: true });
+    enhanceBlock(this._element, this.api, { markdown: true, linkCard: true });
 
     this.data = data;
   }
