@@ -9,6 +9,7 @@
  */
 
 import {
+  make,
   enhanceBlock,
   freeEnhanceBlock,
   buildLog,
@@ -57,6 +58,7 @@ export default class Paragraph {
     this._CSS = {
       block: this.api.styles.block,
       wrapper: "ce-paragraph",
+      plusBtn: "ce-toolbar__plus",
     };
     this.onKeyUp = this.onKeyUp.bind(this);
 
@@ -76,12 +78,40 @@ export default class Paragraph {
   }
 
   /**
+   * set placeholder value based on visibility of editor plus button
+   *
+   * @memberof Paragraph
+   */
+  _setPlaceholder() {
+    setTimeout(() => {
+      const plusBtnEl = document.querySelector(`.${this._CSS.plusBtn}`);
+      // checkout if plus btn is visiable
+      // see https://stackoverflow.com/questions/19669786/check-if-element-is-visible-in-dom
+      if (plusBtnEl.offsetParent === null) {
+        this._element.dataset.placeholder = "";
+      } else {
+        this._element.dataset.placeholder = this._placeholder;
+      }
+    }, 10);
+  }
+
+  /**
    * Check if text content is empty and set empty string to inner html.
    * We need this because some browsers (e.g. Safari) insert <br> into empty contenteditanle elements
    *
    * @param {KeyboardEvent} e - key up event
    */
   onKeyUp(e) {
+    this._setPlaceholder();
+    const plusBtnEl = document.querySelector(`.${this._CSS.plusBtn}`);
+    // checkout if plus btn is visiable
+    // see https://stackoverflow.com/questions/19669786/check-if-element-is-visible-in-dom
+    if (plusBtnEl.offsetParent === null) {
+      this._element.dataset.placeholder = "";
+    } else {
+      this._element.dataset.placeholder = this._placeholder;
+    }
+
     if (e.code !== "Backspace" && e.code !== "Delete") {
       return;
     }
@@ -102,19 +132,16 @@ export default class Paragraph {
    * @private
    */
   drawView() {
-    let div = document.createElement("DIV");
-
-    div.classList.add(this._CSS.wrapper, this._CSS.block);
-    div.contentEditable = true;
+    const div = make("DIV", [this._CSS.wrapper, this._CSS.block], {
+      contentEditable: true,
+    });
     div.dataset.placeholder = this._placeholder;
 
     div.addEventListener("keyup", this.onKeyUp);
+    div.addEventListener("click", (e) => {
+      this._setPlaceholder();
+    });
 
-    // const MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
-    // let observer = new MutationObserver(myFunction);
-    // observer.observe(element, {
-    //   childList: true
-    // });
     return div;
   }
 
