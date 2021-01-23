@@ -42,7 +42,7 @@
     "webpack-cli": "^3.2.3"
   },
   "dependencies": {
-    "@groupher/editor-utils": "0.1.80",
+    "@groupher/editor-utils": "0.2.12",
     "pubsub-js": "^1.8.0"
   }
 }

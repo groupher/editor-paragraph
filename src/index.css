@@ -1,6 +1,8 @@
 .ce-paragraph {
   line-height: 1.6em;
   outline: none;
+  margin-bottom: 6px;
+  margin-top: 2px;
 }
 
 .ce-paragraph[contenteditable="true"] {
