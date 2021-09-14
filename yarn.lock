@@ -791,9 +791,9 @@
     "@babel/helper-validator-identifier" "^7.14.9"
     to-fast-properties "^2.0.0"
 
-"@groupher/editor-utils@0.2.26":
-  version "0.2.26"
-  resolved "https://registry.nlark.com/@groupher/editor-utils/download/@groupher/editor-utils-0.2.26.tgz#64bae6ba465c08550cdae564fa9146ac3cd6e8be"
+"@groupher/editor-utils@0.2.40":
+  version "0.2.40"
+  resolved "https://registry.nlark.com/@groupher/editor-utils/download/@groupher/editor-utils-0.2.40.tgz#082c5c1dc5b3cad5af45a99c1b3c165e630433ba"
   dependencies:
     debug "^4.1.1"
     pubsub-js "^1.8.0"
